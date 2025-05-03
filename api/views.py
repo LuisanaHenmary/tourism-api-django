@@ -21,5 +21,7 @@ def getOneCategory(request, pk):
         category = Category.objects.get(pk=pk)
         serializerCategory = CategotySerializer(category)
         return Response(serializerCategory.data)
+
+            
     except Category.DoesNotExist:
-        return Response(status=status.HTTP_404_NOT_FOUND)
+        return Response(status=status.HTTP_404_NOT_FOUND, data={"message":"This category does not exist"})
