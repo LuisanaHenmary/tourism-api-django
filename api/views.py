@@ -20,8 +20,6 @@ def getOneCategory(request, pk):
         category = Category.objects.get(pk=pk)
         serializerCategory = CategotySerializer(category)
         return Response(serializerCategory.data)
-
-            
     except Category.DoesNotExist:
         return Response(status=status.HTTP_404_NOT_FOUND, data={"message":"This category does not exist"})
     
@@ -32,3 +30,12 @@ def getAllLocations(request):
     serializerLocations = LocationSerializer(locations, many=True)
     return Response(serializerLocations.data)
     
+
+@api_view(["GET"])
+def getOneLocation(request, pk):
+    try:
+        location = Location.objects.get(pk=pk)
+        serializerLocation = LocationSerializer(location)
+        return Response(serializerLocation.data)
+    except Location.DoesNotExist:
+        return Response(status=status.HTTP_404_NOT_FOUND, data={"message":"This location does not exist"})
