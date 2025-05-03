@@ -1,7 +1,6 @@
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
-from api.models import Category
-from api.serializers import CategotySerializer
+from api.serializers import CategotySerializer, Category, LocationSerializer, Location
 from rest_framework import status
 
 @api_view(["GET"])
@@ -25,3 +24,11 @@ def getOneCategory(request, pk):
             
     except Category.DoesNotExist:
         return Response(status=status.HTTP_404_NOT_FOUND, data={"message":"This category does not exist"})
+    
+
+@api_view(["GET"])
+def getAllLocations(request):
+    locations = Location.objects.all()
+    serializerLocations = LocationSerializer(locations, many=True)
+    return Response(serializerLocations.data)
+    
