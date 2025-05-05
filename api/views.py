@@ -1,7 +1,16 @@
 from rest_framework.response import Response
-from rest_framework.decorators import api_view
-from api.serializers import CategotySerializer, Category, LocationSerializer, Location
+from rest_framework.decorators import api_view, permission_classes
+from api.serializers import (
+    CategotySerializer,
+    Category,
+    LocationSerializer,
+    Location,
+    UserSerializer,
+    Review, 
+    ReviewSerialiser
+)
 from rest_framework import status
+from rest_framework.permissions import IsAuthenticated
 
 @api_view(["GET"])
 def getStart(request):
@@ -39,3 +48,24 @@ def getOneLocation(request, pk):
         return Response(serializerLocation.data)
     except Location.DoesNotExist:
         return Response(status=status.HTTP_404_NOT_FOUND, data={"message":"This location does not exist"})
+    
+
+@api_view(["POST"])
+@permission_classes([IsAuthenticated])
+def addReview(request):
+    user = UserSerializer(request.user)
+
+    data = {
+        "user_id":user.data.get("id"),
+        "location_id": request.data.get("location_id"),
+        "comment": request.data.get("comment"),
+        "rating": request.data.get("rating")
+    }
+
+    serializerReview = ReviewSerialiser(data=data)
+
+    if serializerReview.is_valid():
+        serializerReview.save()
+
+    return Response(serializerReview.data)
+
