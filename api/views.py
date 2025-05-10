@@ -12,18 +12,30 @@ from api.serializers import (
 from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
 from django.shortcuts import get_object_or_404
+from drf_yasg.utils import swagger_auto_schema
 
 @api_view(["GET"])
 def getStart(request):
     r = {"sentence":"Hello world"}
     return Response(r)
 
+
+@swagger_auto_schema(
+    method='get',
+    operation_description="List of the all categories",
+    tags=["Categories"]
+)
 @api_view(["GET"])
 def getAllCategories(request):
     categories = Category.objects.all()
     serializerCategories = CategotySerializer(categories, many=True)
     return Response(serializerCategories.data)
 
+@swagger_auto_schema(
+    method='get',
+    operation_description="One category info",
+    tags=["Categories"]
+)
 @api_view(["GET"])
 def getOneCategory(request, pk):
     try:
@@ -34,13 +46,22 @@ def getOneCategory(request, pk):
         return Response(status=status.HTTP_404_NOT_FOUND, data={"message":"This category does not exist"})
     
 
+@swagger_auto_schema(
+    method='get',
+    operation_description="List of the all locations",
+    tags=["Locations"]
+)
 @api_view(["GET"])
 def getAllLocations(request):
     locations = Location.objects.all()
     serializerLocations = LocationSerializer(locations, many=True)
     return Response(serializerLocations.data)
     
-
+@swagger_auto_schema(
+    method='get',
+    operation_description="One location info",
+    tags=["Locations"]
+)
 @api_view(["GET"])
 def getOneLocation(request, pk):
     try:
@@ -50,7 +71,16 @@ def getOneLocation(request, pk):
     except Location.DoesNotExist:
         return Response(status=status.HTTP_404_NOT_FOUND, data={"message":"This location does not exist"})
     
-
+@swagger_auto_schema(
+    method='get',
+    operation_description="List of the all reviews",
+    tags=["Reviews"]
+)
+@swagger_auto_schema(
+    method='post',
+    operation_description="Add a new review",
+    tags=["Reviews"]
+)
 @api_view(["POST", "GET"])
 @permission_classes([IsAuthenticated])
 def addReviewAndGetReviews(request):
@@ -77,7 +107,18 @@ def addReviewAndGetReviews(request):
             serializerReview.save()
 
         return Response(serializerReview.data)
+    
 
+@swagger_auto_schema(
+    method='get',
+    operation_description="One review info",
+    tags=["Reviews"]
+)
+@swagger_auto_schema(
+    method='patch',
+    operation_description="Partial update a review",
+    tags=["Reviews"]
+)
 @api_view(["GET","PATCH"])
 @permission_classes([IsAuthenticated])
 def ReviewRU(request, pk):
@@ -98,6 +139,11 @@ def ReviewRU(request, pk):
             return Response(serializerReview.data)
         return Response(serializerReview.errors, status=status.HTTP_400_BAD_REQUEST)
     
+@swagger_auto_schema(
+    method='get',
+    operation_description="List of the all reviews by user",
+    tags=["Reviews"]
+)
 @api_view(["GET"])
 @permission_classes([IsAuthenticated])
 def usersReviews(request):
