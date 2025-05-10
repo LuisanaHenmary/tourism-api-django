@@ -51,24 +51,32 @@ def getOneLocation(request, pk):
         return Response(status=status.HTTP_404_NOT_FOUND, data={"message":"This location does not exist"})
     
 
-@api_view(["POST"])
+@api_view(["POST", "GET"])
 @permission_classes([IsAuthenticated])
-def addReview(request):
-    user = UserSerializer(request.user)
+def addReviewAndGetReviews(request):
 
-    data = {
-        "user_id":user.data.get("id"),
-        "location_id": request.data.get("location_id"),
-        "comment": request.data.get("comment"),
-        "rating": request.data.get("rating")
-    }
+    if request.method == "GET":
+        reviews = Review.objects.all()
+        serializerReview = ReviewSerialiser(reviews, many=True)
+        return Response(serializerReview.data)
 
-    serializerReview = ReviewSerialiser(data=data)
+    elif request.method == "POST":
+    
+        user = UserSerializer(request.user)
 
-    if serializerReview.is_valid():
-        serializerReview.save()
+        data = {
+            "user_id":user.data.get("id"),
+            "location_id": request.data.get("location_id"),
+            "comment": request.data.get("comment"),
+            "rating": request.data.get("rating")
+        }
 
-    return Response(serializerReview.data)
+        serializerReview = ReviewSerialiser(data=data)
+
+        if serializerReview.is_valid():
+            serializerReview.save()
+
+        return Response(serializerReview.data)
 
 @api_view(["GET","PATCH"])
 @permission_classes([IsAuthenticated])
