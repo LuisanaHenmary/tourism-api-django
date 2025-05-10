@@ -6,7 +6,8 @@ from api.views import (
     getAllLocations,
     getOneLocation,
     addReview,
-    ReviewRU
+    ReviewRU,
+    usersReviews
  )
 from rest_framework_simplejwt.views import (
     TokenObtainPairView,
@@ -23,4 +24,5 @@ urlpatterns = [
     path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
     path('reviews/', addReview),
     path('reviews/<int:pk>/', ReviewRU),
+    path('reviews/user/', usersReviews),
 ]
