@@ -89,7 +89,15 @@ def ReviewRU(request, pk):
             serializerReview.save()
             return Response(serializerReview.data)
         return Response(serializerReview.errors, status=status.HTTP_400_BAD_REQUEST)
-
+    
+@api_view(["GET"])
+@permission_classes([IsAuthenticated])
+def usersReviews(request):
+    user = UserSerializer(request.user)
+    id = user.data.get("id")
+    reviews = Review.objects.filter(user_id=id)
+    serializerReview = ReviewSerialiser(reviews, many=True)
+    return Response(serializerReview.data)
 
 
     
