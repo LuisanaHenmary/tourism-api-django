@@ -11,6 +11,7 @@ from api.serializers import (
 )
 from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
+from django.shortcuts import get_object_or_404
 
 @api_view(["GET"])
 def getStart(request):
@@ -69,3 +70,26 @@ def addReview(request):
 
     return Response(serializerReview.data)
 
+@api_view(["GET","PATCH"])
+@permission_classes([IsAuthenticated])
+def ReviewRU(request, pk):
+
+    review = get_object_or_404(Review, pk=pk)
+    
+    if review.user_id != request.user:
+        return Response({"message":f"Unauthorized"}, status=status.HTTP_401_UNAUTHORIZED)
+    
+    if request.method == "GET":
+        serializerReview = ReviewSerialiser(review)
+        return Response(serializerReview.data)
+    
+    elif request.method == "PATCH":
+        serializerReview = ReviewSerialiser(review, data=request.data, partial=True)
+        if serializerReview.is_valid():
+            serializerReview.save()
+            return Response(serializerReview.data)
+        return Response(serializerReview.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+
+    
