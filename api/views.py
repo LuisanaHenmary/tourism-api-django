@@ -7,7 +7,9 @@ from api.serializers import (
     Location,
     UserSerializer,
     Review, 
-    ReviewSerialiser
+    ReviewSerialiser,
+    Favorite,
+    FavoriteSerialiser
 )
 from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
@@ -153,5 +155,56 @@ def usersReviews(request):
     serializerReview = ReviewSerialiser(reviews, many=True)
     return Response(serializerReview.data)
 
+@swagger_auto_schema(
+    method='get',
+    operation_description="List of the all favorites by user",
+    tags=["Favorites"]
+)
+@swagger_auto_schema(
+    method='post',
+    operation_description="Add a new favorite by an user",
+    tags=["Favorites"]
+)
+@api_view(["POST", "GET"])
+@permission_classes([IsAuthenticated])
+def getAllFavoritesAddFavoriteByUser(request):
 
+    user = UserSerializer(request.user)
+    id_user = user.data.get("id")
     
+    if request.method == "GET":
+        favorites = Favorite.objects.filter(user_id=id_user)
+        serializerFavorite = FavoriteSerialiser(favorites, many=True)
+        return Response(serializerFavorite.data)
+
+    elif request.method == "POST":
+        
+        data = {
+            "user_id":id_user,
+            "location_id": request.data.get("location_id")
+        }
+
+        serializerFavorite = FavoriteSerialiser(data=data)
+
+        if serializerFavorite.is_valid():
+            serializerFavorite.save()
+
+        return Response(status=status.HTTP_201_CREATED, data={"message":"Favorite successfully added"})
+    
+@swagger_auto_schema(
+    method='delete',
+    operation_description="Delete a favorite",
+    tags=["Favorites"]
+)
+@api_view(["DELETE"])
+@permission_classes([IsAuthenticated])
+def deleteFavorite(request, pk):
+
+    favorite = get_object_or_404(Favorite, pk=pk)
+    
+    if favorite.user_id != request.user:
+        return Response({"message":f"Unauthorized"}, status=status.HTTP_401_UNAUTHORIZED)
+    
+    if request.method == "DELETE":
+        favorite.delete()
+        return Response(status=status.HTTP_200_OK, data={"message":"Favorite successfully delete"})
