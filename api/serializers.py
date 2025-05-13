@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from api.models import Category, Location, User, Review
+from api.models import Category, Location, User, Review, Favorite
 
 class CategotySerializer(serializers.ModelSerializer):
     class Meta:
@@ -20,4 +20,9 @@ class UserSerializer(serializers.ModelSerializer):
 class ReviewSerialiser(serializers.ModelSerializer):
     class Meta:
         model=Review
+        fields="__all__"
+
+class FavoriteSerialiser(serializers.ModelSerializer):
+    class Meta:
+        model=Favorite
         fields="__all__"
