@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'api',
     'coreapi',
     'drf_yasg',
+    'rest_framework_simplejwt.token_blacklist',
 ]
 
 MIDDLEWARE = [

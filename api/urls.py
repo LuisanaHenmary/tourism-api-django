@@ -9,7 +9,8 @@ from api.views import (
     ReviewRU,
     usersReviews,
     getAllFavoritesAddFavoriteByUser,
-    deleteFavorite
+    deleteFavorite,
+    logOut
  )
 from rest_framework_simplejwt.views import (
     TokenObtainPairView,
@@ -22,11 +23,12 @@ urlpatterns = [
     path('categories/<int:pk>/', getOneCategory),
     path('locations/', getAllLocations),
     path('locations/<int:pk>/', getOneLocation),
-    path('api/login/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
-    path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
+    path('api/login/', TokenObtainPairView.as_view()),
+    path('api/token/refresh/', TokenRefreshView.as_view()),
     path('reviews/', addReviewAndGetReviews),
     path('reviews/<int:pk>/', ReviewRU),
     path('reviews/user/', usersReviews),
     path('favorites/', getAllFavoritesAddFavoriteByUser),
     path('favorites/<int:pk>/', deleteFavorite),
+    path('api/logout/', logOut),
 ]

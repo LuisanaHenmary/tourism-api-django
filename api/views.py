@@ -15,6 +15,7 @@ from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
 from django.shortcuts import get_object_or_404
 from drf_yasg.utils import swagger_auto_schema
+from rest_framework_simplejwt.tokens import RefreshToken
 
 @api_view(["GET"])
 def getStart(request):
@@ -208,3 +209,18 @@ def deleteFavorite(request, pk):
     if request.method == "DELETE":
         favorite.delete()
         return Response(status=status.HTTP_200_OK, data={"message":"Favorite successfully delete"})
+    
+@swagger_auto_schema(
+    method='post',
+    operation_description="Invalidates the refresh token"
+)
+@api_view(["POST"])
+def logOut(request):
+    try:
+        refresh_token = request.data["refresh"]
+        token = RefreshToken(refresh_token)
+        token.blacklist()
+        return Response({"detail": "Session successfully closed."}, status=status.HTTP_205_RESET_CONTENT)
+    
+    except Exception as e:
+        return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
