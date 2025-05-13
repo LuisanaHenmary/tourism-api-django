@@ -7,7 +7,9 @@ from api.views import (
     getOneLocation,
     addReviewAndGetReviews,
     ReviewRU,
-    usersReviews
+    usersReviews,
+    getAllFavoritesAddFavoriteByUser,
+    deleteFavorite
  )
 from rest_framework_simplejwt.views import (
     TokenObtainPairView,
@@ -25,4 +27,6 @@ urlpatterns = [
     path('reviews/', addReviewAndGetReviews),
     path('reviews/<int:pk>/', ReviewRU),
     path('reviews/user/', usersReviews),
+    path('favorites/', getAllFavoritesAddFavoriteByUser),
+    path('favorites/<int:pk>/', deleteFavorite),
 ]
